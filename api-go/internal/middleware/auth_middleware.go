@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	// このミドルウェアは `internal/auth` パッケージのJWT検証機能を利用します
-	"github.com/your-username/openrag/api-go/internal/auth"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/auth"
 )
 
 // ミドルウェアとハンドラ間でデータを渡すために使用する定数

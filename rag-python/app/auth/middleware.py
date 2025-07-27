@@ -3,8 +3,8 @@
 import jwt
 from fastapi import Request, HTTPException, status
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
-from app.core.config import settings
+from pydantic import BaseModel, Field, Field
+from core.config import settings
 
 class AuthClaims(BaseModel):
     user_id: int = Field(..., alias="user_id")

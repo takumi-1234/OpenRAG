@@ -36,7 +36,8 @@ RUN mkdir -p ${HF_HOME} && chown -R appuser:appgroup ${HF_HOME} /app
 USER appuser
 
 # アプリケーションコードのコピー (appuserとしてコピー)
-COPY ./app ./app
+# localのappディレクトリの中身を、コンテナのWORKDIRである/appにコピー
+COPY app/ .
 
 # Streamlitサーバーの起動
-CMD ["streamlit", "run", "app/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0"]

@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/your-username/openrag/api-go/internal/model"
-	"github.com/your-username/openrag/api-go/internal/repository"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/model"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/repository"
 )
 
 // LectureServiceは講義関連のビジネスロジックを提供します。

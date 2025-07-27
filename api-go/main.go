@@ -8,14 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/your-username/openrag/api-go/internal/auth"
-	"github.com/your-username/openrag/api-go/internal/config"
-	"github.com/your-username/openrag/api-go/internal/handler"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/auth"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/config"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/handler"
 
 	// ★★★ ここを修正: "auth" という別名を削除します ★★★
-	"github.com/your-username/openrag/api-go/internal/middleware"
-	"github.com/your-username/openrag/api-go/internal/repository"
-	"github.com/your-username/openrag/api-go/internal/service"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/middleware"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/repository"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/service"
 )
 
 func main() {

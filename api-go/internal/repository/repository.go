@@ -5,7 +5,7 @@ package repository
 import (
 	"context"
 
-	"github.com/your-username/openrag/api-go/internal/model"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/model"
 )
 
 // UserRepository はユーザー関連のDB操作を定義します。

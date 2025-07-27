@@ -39,6 +39,7 @@ services:
       - "8000:8000"
     volumes:
       - ./api-go:/app # ホットリロードのためにソースコードをマウント
+      - ./.env:/app/.env # .envファイルを直接マウントしてViperが読み込めるようにする
     depends_on:
       db:
         condition: service_healthy
@@ -59,7 +60,7 @@ services:
     volumes:
       - chroma_data:/app/data/chroma
       - huggingface_cache:/app/.cache/huggingface
-      - ./rag-python/app:/app/app # 開発時のホットリロード用
+      - ./rag-python/app:/app # 開発時のホットリロード用
     networks:
       - openrag_network
 
@@ -75,7 +76,7 @@ services:
     ports:
       - "8501:8501"
     volumes:
-      - ./frontend-streamlit/app:/app/app # 開発時のホットリロード用
+      - ./frontend-streamlit/app:/app # 開発時のホットリロード用
     depends_on:
       - api-go
       - rag-python

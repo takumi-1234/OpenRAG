@@ -7,9 +7,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/your-username/openrag/api-go/internal/middleware"
-	"github.com/your-username/openrag/api-go/internal/model"
-	"github.com/your-username/openrag/api-go/internal/service"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/middleware"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/model"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/service"
 )
 
 // ChatHistoryHandlerはチャット履歴関連のHTTPリクエストを処理します。

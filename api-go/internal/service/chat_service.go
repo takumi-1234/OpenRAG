@@ -5,8 +5,8 @@ package service
 import (
 	"context"
 
-	"github.com/your-username/openrag/api-go/internal/model"
-	"github.com/your-username/openrag/api-go/internal/repository"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/model"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/repository"
 )
 
 // ChatServiceはチャット関連のビジネスロジックを提供します。

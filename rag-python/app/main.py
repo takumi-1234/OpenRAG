@@ -7,11 +7,11 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, Request, 
 from fastapi.responses import JSONResponse
 from werkzeug.utils import secure_filename
 
-from app.core.config import settings
-from app.rag.chroma_manager import ChromaManager
-from app.rag.document_processor import process_documents, SUPPORTED_EXTENSIONS
-from app.rag.llm_gemini import GeminiChat
-from app.auth.middleware import auth_middleware, AuthClaims
+from core.config import settings
+from rag.chroma_manager import ChromaManager
+from rag.document_processor import process_documents, SUPPORTED_EXTENSIONS
+from rag.llm_gemini import GeminiChat
+from auth.middleware import auth_middleware, AuthClaims
 
 # ロギング設定
 logging.basicConfig(level=logging.INFO)

@@ -1,5 +1,5 @@
 # --- 1. ビルドステージ ---
-FROM golang:1.22-alpine AS base
+FROM golang:1.24-alpine AS base
 WORKDIR /app
 
 # gitをインストールして、go modが依存関係を解決できるようにする
@@ -22,7 +22,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /main -ldflags="-w -s" .
 # --- 1.5 開発ステージ ---
 FROM base AS development
 # airをインストール
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@latest
 WORKDIR /app
 CMD ["air", "-c", ".air.toml"]
 

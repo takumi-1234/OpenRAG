@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/your-username/openrag/api-go/internal/model"
+	"github.com/takumi-1234/OpenRAG/api-go/internal/model"
 )
 
 type lectureRepository struct {

@@ -2,7 +2,7 @@
 
 module github.com/takumi-1234/OpenRAG/api-go
 
-go 1.22.3
+go 1.24
 
 require (
 	github.com/gin-gonic/gin v1.10.1

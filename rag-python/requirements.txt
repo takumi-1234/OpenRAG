@@ -24,3 +24,4 @@ python-multipart==0.0.9
 # Utilities
 python-dotenv==1.0.1
 werkzeug==3.0.3
+sentencepiece==0.2.0 # 高速トークナイザーのために必要
