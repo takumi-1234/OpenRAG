@@ -50,7 +50,6 @@ graph TD
     RagPython -->|検索| ChromaDB
     RagPython -->|応答生成| Gemini
 ```
-````
 
 ### 各コンテナの役割
 
