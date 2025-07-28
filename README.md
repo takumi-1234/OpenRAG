@@ -4,7 +4,7 @@
 
 ユーザー認証、ワークスペース管理、ゲストモードなどの機能を備えており、個人利用からチームでのナレッジベース共有まで、幅広い用途に対応可能です。
 
-## 主な機能 (Features)
+## ✨ 主な機能
 
 - **ユーザー認証**: 安全なJWTベースのユーザー登録・ログイン機能。
 - **ワークスペース管理**: プロジェクトや目的に応じてドキュメントを分離・管理。
@@ -13,7 +13,7 @@
 - **ゲストモード**: ログイン不要で、手軽にアプリケーションのコア機能を試せる一時利用モード。
 - **マイクロサービスアーキテクチャ**: GoとPythonの得意分野を活かした、スケーラブルでメンテナンス性の高い設計。
 
-## アーキテクチャ (Architecture)
+## 🏛️ アーキテクチャ
 
 ```mermaid
 graph TD
@@ -22,29 +22,29 @@ graph TD
     end
 
     subgraph "フロントエンド (Docker)"
-        Frontend[<fa:fa-window-maximize> Streamlit UI <br> localhost:8501]
+        Frontend[<fa:fa-window-maximize> Streamlit UI<br>localhost:8501]
     end
 
     subgraph "バックエンド (Docker)"
-        ApiGo[<fa:fa-server> Go API (Gin) <br> 認証・ワークスペース管理 <br> localhost:8000]
-        RagPython[<fa:fa-brain> Python RAG API (FastAPI) <br> RAG処理・LLM連携 <br> localhost:8001]
+        ApiGo[<fa:fa-server> Go API (Gin)<br>認証・ワークスペース管理]
+        RagPython[<fa:fa-brain> Python RAG API (FastAPI)<br>RAG処理・LLM連携]
     end
 
     subgraph "データストア (Docker)"
-        MySQL[<fa:fa-database> MySQL <br> ユーザー・ワークスペース情報]
-        ChromaDB[<fa:fa-vector-square> ChromaDB <br> ベクトルデータ]
+        MySQL[<fa:fa-database> MySQL<br>ユーザー・ワークスペース情報]
+        ChromaDB[<fa:fa-vector-square> ChromaDB<br>ベクトルデータ]
     end
 
     subgraph "外部サービス"
         Gemini[<fa:fa-robot> Google Gemini API]
     end
 
-    User -- HTTPS --> Frontend
-    Frontend -- APIリクエスト --> ApiGo
-    Frontend -- APIリクエスト --> RagPython
-    ApiGo -- CRUD --> MySQL
-    RagPython -- ベクトル化・検索 --> ChromaDB
-    RagPython -- 応答生成 --> Gemini
+    User -- HTTPS --> Frontend;
+    Frontend -- APIリクエスト --> ApiGo;
+    Frontend -- APIリクエスト --> RagPython;
+    ApiGo -- CRUD --> MySQL;
+    RagPython -- ベクトル化・検索 --> ChromaDB;
+    RagPython -- 応答生成 --> Gemini;
 ```
 
 - **`frontend-streamlit` (Port 8501)**: ユーザーインターフェース。

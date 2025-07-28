@@ -207,7 +207,7 @@ def main_page():
                     else:
                         try:
                             with st.spinner("作成中..."):
-                                go_api.create_workspace(
+                                go_api.create_lecture(
                                     token=st.session_state.token,
                                     name=new_workspace_name,
                                     system_prompt=new_system_prompt
@@ -221,7 +221,7 @@ def main_page():
 
         # ワークスペースの選択
         try:
-            st.session_state.workspaces = go_api.get_workspaces(st.session_state.token)
+            st.session_state.workspaces = go_api.get_lectures(st.session_state.token)
         except Exception as e:
             st.error(f"ワークスペース一覧の取得に失敗しました: {e}")
             return
@@ -254,7 +254,7 @@ def main_page():
                             try:
                                 result = python_rag_api.upload_document(
                                     token=st.session_state.token,
-                                    workspace_id=st.session_state.selected_workspace['id'],
+                                    lecture_id=st.session_state.selected_workspace['id'],
                                     file=uploaded_file
                                 )
                                 st.success(f"ファイル「{result['filename']}」の処理が完了しました。")
@@ -291,7 +291,7 @@ def main_page():
                 try:
                     response_data = python_rag_api.post_chat_message(
                         token=st.session_state.token,
-                        workspace_id=st.session_state.selected_workspace['id'],
+                        lecture_id=st.session_state.selected_workspace['id'],
                         query=prompt,
                         system_prompt=st.session_state.selected_workspace.get("system_prompt")
                     )
