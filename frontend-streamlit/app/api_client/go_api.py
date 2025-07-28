@@ -16,8 +16,8 @@ def login(email: str, password: str) -> Dict[str, Any]:
     response.raise_for_status()  # エラーがあればHTTPErrorを送出
     return response.json()
 
-def get_lectures(token: str) -> List[Dict[str, Any]]:
-    """ユーザーが履修している講義一覧を取得する"""
+def get_workspaces(token: str) -> List[Dict[str, Any]]:
+    """ユーザーが所有するワークスペース一覧を取得する"""
     url = f"{API_GO_BASE_URL}/api/v1/lectures"
     headers = {"Authorization": f"Bearer {token}"}
     
@@ -37,8 +37,8 @@ def register(username: str, email: str, password: str) -> Dict[str, Any]:
     response.raise_for_status()
     return response.json()
 
-def create_lecture(token: str, name: str, system_prompt: str) -> Dict[str, Any]:
-    """新しいワークスペース（講義）を作成する"""
+def create_workspace(token: str, name: str, system_prompt: str) -> Dict[str, Any]:
+    """新しいワークスペースを作成する"""
     url = f"{API_GO_BASE_URL}/api/v1/lectures"
     headers = {"Authorization": f"Bearer {token}"}
     payload = {

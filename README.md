@@ -1,46 +1,50 @@
-# OpenRAG: 講義支援マルチテナントRAGチャットボット
+# OpenRAG 🚀
 
-OpenRAGは、大学の講義ごとに特化した知識ベースを持つ、スケーラブルなRAG（Retrieval-Augmented Generation）チャットボットシステムです。
+**OpenRAG**は、独自のドキュメントに基づいた対話型AI環境を、ローカルで、かつ無料で構築するためのオープンソースプロジェクトです。
 
-## ✨ 特徴
+ユーザー認証、ワークスペース管理、ゲストモードなどの機能を備えており、個人利用からチームでのナレッジベース共有まで、幅広い用途に対応可能です。
 
-- **マルチテナント対応**: 講義ごとに独立したベクトルデータベースとシステムプロンプトを設定可能。
-- **スケーラブルなアーキテクチャ**: GoとPythonによるマイクロサービス構成で、関心事を分離し、メンテナンス性とスケーラビリティを向上。
-- **認証機能**: JWTベースの認証により、セキュアなAPIアクセスを実現。
-- **永続化**: 講義データ、チャット履歴、ベクトルDBはすべて永続化されます。
-- **簡単なセットアップ**: Docker Composeにより、ワンコマンドで全サービスを起動可能。
+## 主な機能 (Features)
 
-## 🏛️ アーキテクチャ
+- **ユーザー認証**: 安全なJWTベースのユーザー登録・ログイン機能。
+- **ワークスペース管理**: プロジェクトや目的に応じてドキュメントを分離・管理。
+- **ドキュメントアップロード**: PDF, DOCX, TXT形式のファイルをアップロードし、AIの知識源として活用。
+- **RAGチャット**: アップロードしたドキュメントの内容に基づき、AIが根拠を示しながら質問に回答。
+- **ゲストモード**: ログイン不要で、手軽にアプリケーションのコア機能を試せる一時利用モード。
+- **マイクロサービスアーキテクチャ**: GoとPythonの得意分野を活かした、スケーラブルでメンテナンス性の高い設計。
 
-このプロジェクトは、4つのコンテナ化されたサービスで構成されています。
+## アーキテクチャ (Architecture)
 
 ```mermaid
 graph TD
-    subgraph "User's Browser"
-        F[Streamlit Frontend]
+    subgraph "ユーザー"
+        User[<fa:fa-user> ユーザー]
     end
 
-    subgraph "Backend Services"
-        G[Go API Service]
-        P[Python RAG Service]
-    end
-    
-    subgraph "Data Stores"
-        DB[(MySQL Database)]
-        VDB[(ChromaDB)]
+    subgraph "フロントエンド (Docker)"
+        Frontend[<fa:fa-window-maximize> Streamlit UI <br> localhost:8501]
     end
 
-    F -- "ログイン, 講義情報取得" --> G
-    F -- "ファイルアップロード, チャット" --> P
-    G -- "ユーザー/講義/履歴のCRUD" --> DB
-    P -- "Embedding/検索" --> VDB
-    P -- "回答生成" --> LLM(Gemini API)
+    subgraph "バックエンド (Docker)"
+        ApiGo[<fa:fa-server> Go API (Gin) <br> 認証・ワークスペース管理 <br> localhost:8000]
+        RagPython[<fa:fa-brain> Python RAG API (FastAPI) <br> RAG処理・LLM連携 <br> localhost:8001]
+    end
 
-    linkStyle 0 stroke-width:2px,fill:none,stroke:blue;
-    linkStyle 1 stroke-width:2px,fill:none,stroke:green;
-    linkStyle 2 stroke-width:2px,fill:none,stroke:purple;
-    linkStyle 3 stroke-width:2px,fill:none,stroke:orange;
-    linkStyle 4 stroke-width:2px,fill:none,stroke:red;
+    subgraph "データストア (Docker)"
+        MySQL[<fa:fa-database> MySQL <br> ユーザー・ワークスペース情報]
+        ChromaDB[<fa:fa-vector-square> ChromaDB <br> ベクトルデータ]
+    end
+
+    subgraph "外部サービス"
+        Gemini[<fa:fa-robot> Google Gemini API]
+    end
+
+    User -- HTTPS --> Frontend
+    Frontend -- APIリクエスト --> ApiGo
+    Frontend -- APIリクエスト --> RagPython
+    ApiGo -- CRUD --> MySQL
+    RagPython -- ベクトル化・検索 --> ChromaDB
+    RagPython -- 応答生成 --> Gemini
 ```
 
 - **`frontend-streamlit` (Port 8501)**: ユーザーインターフェース。

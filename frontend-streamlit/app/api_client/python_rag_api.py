@@ -8,9 +8,9 @@ from typing import Dict, Any, IO
 # 環境変数からPython RAG APIのベースURLを取得
 API_PYTHON_RAG_URL = os.getenv("API_PYTHON_RAG_URL", "http://localhost:8001")
 
-def upload_document(token: str, lecture_id: int, file: IO) -> Dict[str, Any]:
-    """指定された講義にドキュメントをアップロードする"""
-    url = f"{API_PYTHON_RAG_URL}/api/v1/lectures/{lecture_id}/upload"
+def upload_document(token: str, workspace_id: int, file: IO) -> Dict[str, Any]:
+    """指定されたワークスペースにドキュメントをアップロードする"""
+    url = f"{API_PYTHON_RAG_URL}/api/v1/lectures/{workspace_id}/upload"
     headers = {"Authorization": f"Bearer {token}"}
     files = {"file": file}
     
@@ -19,9 +19,9 @@ def upload_document(token: str, lecture_id: int, file: IO) -> Dict[str, Any]:
     response.raise_for_status()
     return response.json()
 
-def post_chat_message(token: str, lecture_id: int, query: str, system_prompt: str = None) -> Dict[str, Any]:
+def post_chat_message(token: str, workspace_id: int, query: str, system_prompt: str = None) -> Dict[str, Any]:
     """チャットメッセージを送信し、RAGによる回答を取得する"""
-    url = f"{API_PYTHON_RAG_URL}/api/v1/lectures/{lecture_id}/chat"
+    url = f"{API_PYTHON_RAG_URL}/api/v1/lectures/{workspace_id}/chat"
     headers = {"Authorization": f"Bearer {token}"}
     payload = {"query": query}
     if system_prompt:
