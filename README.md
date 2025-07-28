@@ -27,33 +27,33 @@
 ```mermaid
 graph TD
     subgraph "ユーザー"
-        User[<fa:fa-user> ユーザー]
+        User["👤 ユーザー"]
     end
 
     subgraph "フロントエンド (Docker)"
-        Frontend[<fa:fa-window-maximize> Streamlit UI<br>localhost:8501]
+        Frontend["🖥️ Streamlit UI\nlocalhost:8501"]
     end
 
     subgraph "バックエンド (Docker)"
-        ApiGo[<fa:fa-server> Go API (Gin)<br>認証・管理]
-        RagPython[<fa:fa-brain> Python RAG API (FastAPI)<br>Embedding・LLM連携]
+        ApiGo["🧩 Go API (Gin)\n認証・管理"]
+        RagPython["🧠 Python RAG API (FastAPI)\nEmbedding・LLM連携"]
     end
 
     subgraph "データストア (Docker)"
-        MySQL[<fa:fa-database> MySQL<br>ユーザー・設定情報]
-        ChromaDB[<fa:fa-vector-square> ChromaDB<br>ベクトルデータ]
+        MySQL["🗄️ MySQL\nユーザー・設定情報"]
+        ChromaDB["📦 ChromaDB\nベクトルデータ"]
     end
 
     subgraph "外部サービス"
-        Gemini[<fa:fa-robot> Google Gemini API]
+        Gemini["🤖 Google Gemini API"]
     end
 
-    User -- HTTPS --> Frontend
-    Frontend -- APIリクエスト --> ApiGo
-    Frontend -- APIリクエスト --> RagPython
-    ApiGo -- CRUD --> MySQL
-    RagPython -- 検索 --> ChromaDB
-    RagPython -- 応答生成 --> Gemini
+    User -->|HTTPS| Frontend
+    Frontend -->|APIリクエスト| ApiGo
+    Frontend -->|APIリクエスト| RagPython
+    ApiGo -->|CRUD| MySQL
+    RagPython -->|検索| ChromaDB
+    RagPython -->|応答生成| Gemini
 ````
 
 ### 各コンテナの役割
