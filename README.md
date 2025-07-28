@@ -30,7 +30,7 @@ graph TD
     end
 
     subgraph "バックエンド (Docker)"
-        ApiGo["🧩 Go API (Gin)\n認証・管理"]
+        ApiGo["🧩 Go API (Gin) \n 認証・管理"]
         RagPython["🧠 Python RAG API (FastAPI)\nEmbedding・LLM連携"]
     end
 
