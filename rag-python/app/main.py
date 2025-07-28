@@ -16,6 +16,12 @@ from auth.middleware import auth_middleware, AuthClaims
 # ロギング設定
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+# pypdfの冗長な警告はエラーが発生しているように見えるため、抑制する
+logging.getLogger("pypdf._reader").setLevel(logging.ERROR)
+# ChromaDBの不要なテレメトリーエラーとINFOログを抑制する
+logging.getLogger("chromadb.telemetry.product.posthog").setLevel(logging.CRITICAL)
+logging.getLogger("chromadb.api.segment").setLevel(logging.WARNING)
+
 
 # FastAPIアプリケーションの初期化
 app = FastAPI(title="OpenRAG - RAG Service")
@@ -26,6 +32,19 @@ gemini_chat = GeminiChat(api_key=settings.GEMINI_API_KEY, model_name=settings.GE
 
 # ミドルウェアの適用
 app.middleware("http")(auth_middleware)
+
+# --- 依存性注入: 認証ミドルウェアからClaimsを取得 ---
+def get_current_claims(request: Request) -> AuthClaims:
+    """
+    リクエストスコープのstateから認証情報を取得する依存性注入関数。
+    認証ミドルウェアによって事前にrequest.state.claimsに情報が格納されている必要がある。
+    """
+    if not hasattr(request.state, "claims"):
+        # このエラーは通常、ミドルウェアが正しく適用されていないか、
+        # 保護されていないルートで呼び出された場合に発生する
+        raise HTTPException(status_code=401, detail="認証情報が見つかりません。")
+    return request.state.claims
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -40,7 +59,7 @@ def health_check():
 async def upload_document(
     lecture_id: int = Path(..., title="講義ID", ge=1),
     file: UploadFile = File(..., description="アップロードするファイル"),
-    claims: AuthClaims = Depends(lambda request: request.state.claims) # 認証ミドルウェアからClaimsを取得
+    claims: AuthClaims = Depends(get_current_claims)
 ):
     # ここでclaims.user_idを使って、アップロード権限があるかなどをチェック可能（ロジックはapi-go側にあると仮定）
     logger.info(f"User {claims.user_id} uploading file for lecture {lecture_id}")
@@ -86,7 +105,7 @@ class ChatRequest(BaseModel):
 async def chat_with_document(
     request: ChatRequest,
     lecture_id: int = Path(..., title="講義ID", ge=1),
-    claims: AuthClaims = Depends(lambda request: request.state.claims)
+    claims: AuthClaims = Depends(get_current_claims)
 ):
     logger.info(f"User {claims.user_id} chatting with lecture {lecture_id}")
     collection_name = f"lecture_{lecture_id}"
@@ -107,4 +126,63 @@ async def chat_with_document(
 
     except Exception as e:
         logger.error(f"Chat failed for lecture {lecture_id}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"チャット処理中にエラーが発生しました: {str(e)}")
+
+# --- Guest Endpoints (No Authentication) ---
+
+@app.post("/api/v1/guest/{guest_id}/upload", tags=["Guest"])
+async def guest_upload_document(
+    guest_id: str = Path(..., title="ゲストID"),
+    file: UploadFile = File(..., description="アップロードするファイル"),
+):
+    logger.info(f"Guest {guest_id} uploading file.")
+
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="ファイル名がありません。")
+
+    safe_filename = secure_filename(file.filename)
+    file_path = os.path.join(settings.UPLOAD_DIR, f"{guest_id}_{safe_filename}")
+    file_ext = os.path.splitext(safe_filename)[1].lower()
+
+    if file_ext not in SUPPORTED_EXTENSIONS:
+        raise HTTPException(status_code=400, detail=f"サポートされていないファイル形式です: {file_ext}")
+
+    try:
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        documents = process_documents(file_path)
+        if not documents:
+            raise HTTPException(status_code=400, detail="ファイルからテキストを抽出できませんでした。")
+
+        # ゲストIDからコレクション名を生成
+        collection_name = f"guest_{guest_id}"
+        chroma_manager.add_documents(documents, collection_name=collection_name)
+
+        return {"filename": safe_filename, "chunks_added": len(documents), "collection_name": collection_name}
+
+    except Exception as e:
+        logger.error(f"Guest file upload failed for guest {guest_id}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"ファイル処理中にエラーが発生しました: {str(e)}")
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        await file.close()
+
+
+@app.post("/api/v1/guest/{guest_id}/chat", tags=["Guest"])
+async def guest_chat_with_document(
+    request: ChatRequest,
+    guest_id: str = Path(..., title="ゲストID"),
+):
+    logger.info(f"Guest {guest_id} chatting.")
+    collection_name = f"guest_{guest_id}"
+
+    try:
+        search_results = chroma_manager.search(request.query, collection_name=collection_name, k=3)
+        sources = sorted(list(set(doc.metadata.get("source", "不明") for doc in search_results)))
+        response_text = gemini_chat.generate_response(query=request.query, context_docs=search_results, system_prompt_override=request.system_prompt)
+        return {"response": response_text, "sources": sources}
+    except Exception as e:
+        logger.error(f"Guest chat failed for guest {guest_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"チャット処理中にエラーが発生しました: {str(e)}")

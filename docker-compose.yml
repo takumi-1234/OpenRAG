@@ -55,6 +55,8 @@ services:
     restart: unless-stopped
     env_file: # 他サービスと統一
       - .env
+    environment:
+      - ANONYMIZED_TELEMETRY=false # ChromaDBの不要なテレメトリーエラーを抑制
     ports:
       - "8001:8001"
     volumes:
@@ -71,6 +73,7 @@ services:
       dockerfile: Dockerfile
     container_name: openrag_frontend
     restart: unless-stopped
+    command: streamlit run streamlit_app.py
     env_file:
       - .env
     ports:

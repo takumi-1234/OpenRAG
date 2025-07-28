@@ -10,7 +10,11 @@ class AuthClaims(BaseModel):
     user_id: int = Field(..., alias="user_id")
 
 async def auth_middleware(request: Request, call_next):
-    if request.url.path == "/health" or request.method == "OPTIONS":
+    # 認証が不要な公開パスを定義
+    public_paths = ["/health", "/docs", "/openapi.json"]
+    if request.url.path in public_paths or request.url.path.startswith("/api/v1/guest"):
+        return await call_next(request)
+    if request.method == "OPTIONS":
         return await call_next(request)
 
     auth_header = request.headers.get("Authorization")
