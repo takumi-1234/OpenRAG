@@ -35,7 +35,7 @@ graph TD
     end
 
     subgraph "データストア (Docker)"
-        MySQL["🗄️ MySQL\nユーザー・設定情報"]
+        MySQL["🗄️ MySQL \n ユーザー・設定情報"]
         ChromaDB["📦 ChromaDB\nベクトルデータ"]
     end
 
